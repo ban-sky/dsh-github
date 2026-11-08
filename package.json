@@ -1,0 +1,58 @@
+{
+  "name": "dsh-github",
+  "version": "0.2.1",
+  "private": true,
+  "description": "GitHub integration for DSH: official device-flow sign-in, repository creation, cloning, pull, commit and push. Security first.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "lib/*.js",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ban-sky/dsh-github.git"
+  },
+  "homepage": "https://github.com/ban-sky/dsh-github#readme",
+  "bugs": {
+    "url": "https://github.com/ban-sky/dsh-github/issues"
+  },
+  "author": "ban-sky",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-slots"
+      ]
+    },
+    "manifestVersion": 1
+  },
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "github",
+    "git",
+    "oauth"
+  ]
+}

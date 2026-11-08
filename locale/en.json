@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "GitHub",
+    "description": "Sign in with GitHub's official device flow, then create repositories, clone, pull, commit and push from Settings. Tokens stay in the local credential store."
+  }
+}

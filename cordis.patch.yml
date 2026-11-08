@@ -1,0 +1,8 @@
+# dsh-github bundle patch
+#
+# Mounts the Host half of the plugin. The Client half is discovered from the
+# package's `dsh.client` manifest and rendered by the Web UI as one entry in
+# Settings → GitHub.
+- insert:
+    - id: github
+      name: 'dsh-github'

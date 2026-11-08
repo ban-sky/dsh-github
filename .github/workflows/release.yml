@@ -72,7 +72,12 @@ jobs:
             exit 0
           fi
           printf '//registry.npmjs.org/:_authToken=%s\n' "$NPM_TOKEN" > "$RUNNER_TEMP/npmrc"
-          npm publish --userconfig "$RUNNER_TEMP/npmrc" --access public --provenance
+          echo "package: ${name}@${version}"
+          echo "npm account: $(npm whoami --userconfig "$RUNNER_TEMP/npmrc" --registry https://registry.npmjs.org || echo '(whoami failed)')"
+          if ! npm publish --userconfig "$RUNNER_TEMP/npmrc" --access public --provenance; then
+            echo "::error::npm publish failed. A 404 on PUT means the scope in ${name} does not belong to that npm account, or the token may only read."
+            exit 1
+          fi
 
       - name: Publish the release assets
         env:

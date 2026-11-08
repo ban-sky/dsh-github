@@ -54,5 +54,70 @@
     "github",
     "git",
     "oauth"
-  ]
+  ],
+  "dshGo": {
+    "v": 1,
+    "title": {
+      "zh": "GitHub",
+      "en": "GitHub"
+    },
+    "icon": "fork",
+    "wants": [
+      "draft"
+    ],
+    "contributes": {
+      "composer.actions": [
+        {
+          "id": "save-client-id",
+          "label": {
+            "zh": "存 ID",
+            "en": "Save ID"
+          },
+          "icon": "save"
+        },
+        {
+          "id": "commit-draft",
+          "label": {
+            "zh": "提交",
+            "en": "Commit"
+          },
+          "icon": "check"
+        }
+      ],
+      "composer.tools": [
+        {
+          "id": "github-open",
+          "label": {
+            "zh": "GitHub",
+            "en": "GitHub"
+          },
+          "icon": "fork",
+          "panel": "github"
+        },
+        {
+          "id": "clone-repo",
+          "label": {
+            "zh": "克隆",
+            "en": "Clone"
+          },
+          "icon": "download"
+        }
+      ],
+      "panels": [
+        {
+          "id": "github",
+          "title": {
+            "zh": "GitHub",
+            "en": "GitHub"
+          },
+          "icon": "fork",
+          "placement": [
+            "chat.panel",
+            "session.tab",
+            "features"
+          ]
+        }
+      ]
+    }
+  }
 }

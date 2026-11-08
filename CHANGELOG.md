@@ -4,6 +4,21 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **DSH GO native surface.** On hosts that provide the `dshGo` service the plugin
+  now registers a native panel (account state, device-code sign-in, Agent-tool
+  switch, and refresh/fetch/pull/push/commit/clone/publish for the session
+  folder) plus three composer entries that take the Client ID, the commit message
+  and `owner/name` from the message box. Both surfaces share one service
+  instance, so the credential record and the settings file stay single-sourced;
+  hosts without `dshGo` are unchanged.
+- Native form inputs are only drawn when the app advertises the `form` and
+  `textField` components; otherwise the panel explains the composer entries,
+  because a form nobody can type into is worse than no form.
+
 ## [0.2.1] - 2026-11-08
 
 ### Fixed

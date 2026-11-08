@@ -16,6 +16,7 @@
  */
 
 import { readConfigSync } from './lib/config.js'
+import { registerDshGo } from './lib/dsh-go.js'
 import { createHandler, ROUTE_PATH } from './lib/http.js'
 import { createService } from './lib/service.js'
 import { buildGithubTool } from './lib/tools.js'
@@ -44,6 +45,12 @@ export function apply(ctx) {
         }),
       'dsh-github: fetch route',
     )
+
+    // DSH GO (the phone app) cannot draw the Web UI, so it gets a native panel
+    // and three composer entries backed by the same service instance.
+    child.inject(['dshGo'], (ui) => {
+      registerDshGo(ui, service)
+    })
 
     // Tool registration is a mount-time decision: `ctx.tools.register` is not
     // hot-reloadable, so changing the setting takes effect on the next plugin

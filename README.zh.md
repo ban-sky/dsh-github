@@ -95,6 +95,25 @@ workingDirectory 服务自行解析该会话已提交的工作目录，客户端
 ≤ 640px）折叠成 26px 的分支图标按钮**，避免窄容器把文字挤成竖排；图标按钮仍带
 `aria-label`，读屏软件与悬停提示照常可用。
 
+## DSH GO 手机端
+
+DSH GO 的手机界面是 Flutter 原生的，画不了 Web UI。在提供 `dshGo` 服务的宿主上，
+插件会额外注册一套原生界面，和设置页共用同一个服务实例（同一份令牌、同一份配置、
+同一个登录状态机）：
+
+- **GitHub 面板**：加号面板里的 GitHub、对话详情「插件」页签、或「全部功能」都能
+  打开。里面有账号状态、设备码登录（复制设备码 / 打开授权页 / 取消 / 退出）、
+  Agent 工具开关，以及针对当前对话目录的刷新、更新、拉取、推送。
+- **输入框胶囊**：原生 App 不保证有能填的表单输入框，所以需要文字的操作走输入框
+  ——把 Client ID 粘进去点「存 ID」，把提交信息写进去点「提交」，把 `owner/name`
+  写进去点加号里的「克隆」。
+- App 没上报 `form` / `textField` 组件能力时，面板不画输入框，只保留上面这些入口
+  和说明，避免出现点不动的假表单。
+- 同一台机器上如果装过早期的独立适配包，先卸掉它再用本插件，免得出现两个 GitHub
+  面板抢同一个位置。
+
+网页版不受影响：没有 `dshGo` 服务的宿主上这些代码不会执行。
+
 ## 设置项
 
 | 设置 | 含义 |
@@ -155,6 +174,7 @@ lib/git.js          git 调用、remote/URL 与路径包含性校验
 lib/service.js      状态机、dispatch、脱敏边界
 lib/http.js         POST /api/github 处理器
 lib/tools.js        `github` agent 工具
+lib/dsh-go.js       DSH GO 原生面板 + 输入框入口（共用同一服务实例）
 lib/config.js       非秘密设置（$DSH_HOME/dsh-github.json）
 lib/validate.js     owner/repo/路径/提交信息校验
 lib/errors.js       错误码 + 密钥脱敏

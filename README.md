@@ -115,6 +115,28 @@ the phone web UI (viewport ≤ 640px) it collapses to a 26px branch icon so a na
 composer can never squeeze the label into a vertical column. The icon button keeps
 its `aria-label`, so screen readers and tooltips still name it.
 
+## DSH GO (the phone app)
+
+DSH GO draws its own Flutter UI, so it cannot render the Web settings page. On a
+host that provides the `dshGo` service the plugin registers a native surface that
+shares this plugin's one service instance (one token, one settings file, one
+sign-in state machine):
+
+- **GitHub panel**: account state, device-code sign-in (copy the code, open the
+  authorization page, cancel, sign out), the Agent-tool switch, and
+  refresh/fetch/pull/push for the current session folder. Reachable from the add
+  sheet, the session details "Plugins" tab, or "All features".
+- **Composer entries**: native form inputs are not available everywhere, so
+  text-driven work uses the message box: paste the Client ID and tap "Save ID",
+  type a commit message and tap "Commit", type `owner/name` and tap "Clone".
+- An app that does not advertise the `form` / `textField` components gets the
+  panel without input fields, only those entries and their instructions, instead
+  of a form nobody can type into.
+- Remove any older standalone adaptation package on the same host first, so two
+  GitHub panels do not compete.
+
+Hosts without the `dshGo` service are unaffected: none of this code runs there.
+
 ## Settings
 
 | Setting | Meaning |

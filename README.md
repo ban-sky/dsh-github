@@ -41,6 +41,12 @@ command line, a log line or a Tool result.
 
 ## Install
 
+**From npm** (this is what the plugin market installs):
+
+Use the Harness `plugin_manager` tool with `install_bundle` and the exact version
+`@ban-sky/dsh-github@0.4.0` as the target. The name carries a scope because
+`dsh-github` is taken on npm; the Release packages contain the same code.
+
 **From a release (recommended):**
 
 Every release ships two packages; pick the one for your host. Both unpack to
@@ -78,6 +84,19 @@ Plugins → install from directory, or the Harness `plugin_manager` tool with
 - Host: the `/api/github` authenticated route, the `github` authorization flow,
   and (when enabled) the `github` tool.
 - Client: one `Settings → GitHub` page.
+
+## DSH GO market
+
+The plugin is adapted to the [DSH GO market](https://github.com/ccch1mneyyy/dsh-go-market):
+its `package.json.dshGo` v1 manifest declares the native panel and the composer
+entries (`minApp` 1.0.13), which the market reports as `adapted: true`, `minApp`
+and `features: native-slots`.
+
+The market only lists exact npm versions, so the package is published as
+`@ban-sky/dsh-github` (`dsh-github` is taken on npm). Each release publishes that
+version to npm and then uploads the GitHub Release assets; without an `NPM_TOKEN`
+secret only the Release runs and the log carries a warning. The entry to submit
+lives in [`market/dsh-go-market.json`](market/dsh-go-market.json).
 
 ## Setup: create the OAuth App
 

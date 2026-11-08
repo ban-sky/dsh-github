@@ -1,7 +1,6 @@
 {
-  "name": "dsh-github",
-  "version": "0.3.0",
-  "private": true,
+  "name": "@ban-sky/dsh-github",
+  "version": "0.4.0",
   "description": "GitHub integration for DSH: official device-flow sign-in, repository creation, cloning, pull, commit and push. Security first.",
   "type": "module",
   "engines": {
@@ -24,6 +23,9 @@
     "README.zh.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ban-sky/dsh-github.git"
@@ -47,14 +49,6 @@
     },
     "manifestVersion": 1
   },
-  "license": "MIT",
-  "keywords": [
-    "dsh",
-    "dsh-plugin",
-    "github",
-    "git",
-    "oauth"
-  ],
   "dshGo": {
     "v": 1,
     "title": {
@@ -118,6 +112,16 @@
           ]
         }
       ]
-    }
-  }
+    },
+    "minApp": "1.0.13"
+  },
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "dsh-go",
+    "github",
+    "git",
+    "oauth"
+  ]
 }

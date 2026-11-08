@@ -6,6 +6,25 @@
 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循
 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.4.0] - 2026-11-08
+
+### 变更
+
+- **npm 包名改成 `@ban-sky/dsh-github`。** DSH GO 插件市场只收 npm 上的精确版本，
+  而 `dsh-github` 这个包名在 npm 上已经属于其他发布者。GitHub Release 的安装包照旧
+  可用；如果你用旧包名通过 `install_bundle` 装过 0.3.0，先把它卸掉，因为 `github`
+  这条插件行不能同时挂载两份。
+- `package.json` 去掉了 `private`，并声明 `publishConfig.access: public`，可以发布。
+
+### 新增
+
+- **DSH GO 插件市场信息。** `dshGo.minApp` 为 `1.0.13`；
+  `market/dsh-go-market.json` 是提交到
+  [ccch1mneyyy/dsh-go-market](https://github.com/ccch1mneyyy/dsh-go-market) 的条目
+  （在那个仓库里复制成 `plugins/@ban-sky__dsh-github.json`）。
+- 发版工作流在有 `NPM_TOKEN` 密钥时把该标签的版本发布到 npm（带 provenance）；
+  没有密钥时给出警告，仍然上传 GitHub Release 附件。
+
 ## [0.3.0] - 2026-11-08
 
 ### 新增

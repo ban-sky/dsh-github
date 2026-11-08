@@ -5,4 +5,4 @@
 # Settings → GitHub.
 - insert:
     - id: github
-      name: 'dsh-github'
+      name: '@ban-sky/dsh-github'

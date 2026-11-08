@@ -6,6 +6,28 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] - 2026-11-08
+
+### Changed
+
+- **The npm package is now `@ban-sky/dsh-github`.** The DSH GO market only lists
+  exact npm versions, and the plain `dsh-github` name already belongs to another
+  publisher on npm. GitHub Release packages install exactly as before; if you
+  installed 0.3.0 through `install_bundle` under the old name, remove that
+  package first, because the `github` plugin row cannot be mounted twice.
+- `package.json` no longer sets `private` and declares
+  `publishConfig.access: public`, so the package can be published.
+
+### Added
+
+- **DSH GO market metadata.** `dshGo.minApp` is `1.0.13`, and
+  `market/dsh-go-market.json` is the entry to submit to
+  [ccch1mneyyy/dsh-go-market](https://github.com/ccch1mneyyy/dsh-go-market)
+  (copy it to `plugins/@ban-sky__dsh-github.json` there).
+- The release workflow publishes the tagged version to npm when the `NPM_TOKEN`
+  secret exists, with provenance; without the secret it warns and still uploads
+  the GitHub Release assets.
+
 ## [0.3.0] - 2026-11-08
 
 ### Added

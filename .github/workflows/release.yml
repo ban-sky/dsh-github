@@ -40,14 +40,22 @@ jobs:
           web="dist/dsh-github-${version}.tgz"
           go="dist/dsh-github-${version}-dsh-go.tgz"
           test -f "$web" && test -f "$go" && test -f dist/SHA256SUMS.txt
-          # The web package must not carry the native surface, the DSH GO one must.
-          if tar -tzf "$web" | grep -q 'package/lib/dsh-go.js'; then
+          # List first: piping tar into `grep -q` kills tar with SIGPIPE under pipefail.
+          tar -tzf "$web" > "$RUNNER_TEMP/web.list"
+          tar -tzf "$go" > "$RUNNER_TEMP/go.list"
+          if grep -qx 'package/lib/dsh-go.js' "$RUNNER_TEMP/web.list"; then
             echo "web package unexpectedly ships lib/dsh-go.js" >&2
             exit 1
           fi
-          tar -tzf "$go" | grep -q 'package/lib/dsh-go.js'
-          tar -xOzf "$web" package/package.json | grep -q '"dshGo"' && exit 1 || true
-          tar -xOzf "$go" package/package.json | grep -q '"dshGo"'
+          grep -qx 'package/lib/dsh-go.js' "$RUNNER_TEMP/go.list"
+          tar -xOzf "$web" package/package.json > "$RUNNER_TEMP/web.package.json"
+          tar -xOzf "$go" package/package.json > "$RUNNER_TEMP/go.package.json"
+          if grep -q '"dshGo"' "$RUNNER_TEMP/web.package.json"; then
+            echo "web package unexpectedly declares dshGo" >&2
+            exit 1
+          fi
+          grep -q '"dshGo"' "$RUNNER_TEMP/go.package.json"
+          echo "$version ok"
       - name: Publish the release assets
         env:
           GH_TOKEN: ${{ github.token }}

@@ -16,7 +16,6 @@
  */
 
 import { readConfigSync } from './lib/config.js'
-import { registerDshGo } from './lib/dsh-go.js'
 import { createHandler, ROUTE_PATH } from './lib/http.js'
 import { createService } from './lib/service.js'
 import { buildGithubTool } from './lib/tools.js'
@@ -47,9 +46,23 @@ export function apply(ctx) {
     )
 
     // DSH GO (the phone app) cannot draw the Web UI, so it gets a native panel
-    // and three composer entries backed by the same service instance.
+    // and three composer entries backed by the same service instance. The web
+    // artifact ships without this module, so it is loaded on demand.
     child.inject(['dshGo'], (ui) => {
-      registerDshGo(ui, service)
+      const report = (error) => {
+        if (typeof ui.logger?.warn === 'function') ui.logger.warn(error)
+        else console.warn('[dsh-github] the DSH GO surface is unavailable:', error?.message ?? error)
+      }
+      import('./lib/dsh-go.js').then(
+        ({ registerDshGo }) => {
+          try {
+            registerDshGo(ui, service)
+          } catch (error) {
+            report(error)
+          }
+        },
+        report,
+      )
     })
 
     // Tool registration is a mount-time decision: `ctx.tools.register` is not

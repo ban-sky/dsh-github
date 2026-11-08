@@ -1,5 +1,7 @@
 # dsh-github
 
+[English](README.md) | [中文](README.zh.md)
+
 GitHub integration for the DeepSeek Harness Web UI. Sign in with GitHub's
 official OAuth **device flow**, then create, list, clone, pull, commit and push
 repositories from a single Settings page — or work on the current session folder
@@ -41,14 +43,22 @@ command line, a log line or a Tool result.
 
 **From a release (recommended):**
 
+Every release ships two packages; pick the one for your host. Both unpack to
+`package/`:
+
+| Package | For |
+| --- | --- |
+| `dsh-github-<version>.tgz` | DSH Web / desktop: the Web UI only |
+| `dsh-github-<version>-dsh-go.tgz` | the DSH GO phone app: Web UI plus the native panel and composer entries |
+
 Open the [Releases](https://github.com/ban-sky/dsh-github/releases) page in a
-browser where you are signed in, and download `dsh-github-0.2.1.tgz` plus
-`SHA256SUMS.txt`; or use the GitHub CLI:
+browser where you are signed in, or use the GitHub CLI:
 
 ```bash
-gh release download v0.2.1 -R ban-sky/dsh-github   # needs gh auth login first
+gh release download v0.3.0 -R ban-sky/dsh-github   # needs gh auth login first
 sha256sum -c SHA256SUMS.txt
-tar -xzf dsh-github-0.2.1.tgz                     # creates package/
+tar -xzf dsh-github-0.3.0.tgz                     # web
+tar -xzf dsh-github-0.3.0-dsh-go.tgz              # phone
 ```
 
 > The plain `releases/download/...` URL of a **private** repository only accepts
@@ -58,7 +68,8 @@ tar -xzf dsh-github-0.2.1.tgz                     # creates package/
 > `Accept: application/octet-stream`.
 
 Then install `package/` with the Harness `plugin_manager` tool
-(`install_bundle target:/path/to/package`).
+(`install_bundle target:/path/to/package`). On a phone you can also run
+`dsh plugin --profile web add /path/to/package`.
 
 **From a source checkout:** install this directory as a bundle (Settings →
 Plugins → install from directory, or the Harness `plugin_manager` tool with

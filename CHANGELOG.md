@@ -1,13 +1,21 @@
 # Changelog
 
+[English](CHANGELOG.md) | [中文](CHANGELOG.zh.md)
+
 All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.3.0] - 2026-11-08
 
 ### Added
 
+- **Two installation packages per release.** `scripts/pack.mjs` builds both from
+  this one source tree and `.github/workflows/release.yml` attaches them to the
+  GitHub Release when a `v*` tag is pushed: `dsh-github-<version>.tgz` for DSH
+  Web / desktop (Web UI only) and `dsh-github-<version>-dsh-go.tgz` for the DSH
+  GO phone app. The web package omits `lib/dsh-go.js` and the `dshGo` manifest,
+  which `index.js` loads on demand, so neither artifact carries dead code.
 - **DSH GO native surface.** On hosts that provide the `dshGo` service the plugin
   now registers a native panel (account state, device-code sign-in, Agent-tool
   switch, and refresh/fetch/pull/push/commit/clone/publish for the session

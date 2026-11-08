@@ -1,5 +1,7 @@
 # dsh-github
 
+[English](README.md) | [中文](README.zh.md)
+
 DeepSeek Harness Web UI 的 GitHub 插件。用 GitHub 官方 OAuth **设备码流程**登录，
 然后在设置页里创建、列出、克隆、拉取、提交、推送仓库，或在任意会话的输入框
 下方直接操作该会话目录里的仓库；可选地把同样的能力注册成 agent 工具。
@@ -32,14 +34,21 @@ git config、命令行参数、日志或 Tool 返回值。
 
 **从 Release 下载安装包**（推荐）：
 
+每次发布出两个包，按宿主挑一个，都解出 `package/`：
+
+| 安装包 | 给谁用 |
+| --- | --- |
+| `dsh-github-<版本>.tgz` | DSH 网页版 / 桌面端：只有 Web UI |
+| `dsh-github-<版本>-dsh-go.tgz` | DSH GO 手机 App：Web UI + 原生面板和输入框入口 |
+
 在浏览器里登录 GitHub 后打开
-[Releases](https://github.com/ban-sky/dsh-github/releases)，下载
-`dsh-github-0.2.1.tgz` 与 `SHA256SUMS.txt`；或者用 GitHub CLI：
+[Releases](https://github.com/ban-sky/dsh-github/releases) 下载，或者用 GitHub CLI：
 
 ```bash
-gh release download v0.2.1 -R ban-sky/dsh-github   # 需要先 gh auth login
+gh release download v0.3.0 -R ban-sky/dsh-github   # 需要先 gh auth login
 sha256sum -c SHA256SUMS.txt
-tar -xzf dsh-github-0.2.1.tgz                     # 解出 package/ 目录
+tar -xzf dsh-github-0.3.0.tgz                     # 网页版
+tar -xzf dsh-github-0.3.0-dsh-go.tgz              # 手机用这个
 ```
 
 > 私有仓库的 `releases/download/...` 直链只认浏览器登录态，API 令牌访问会
@@ -48,7 +57,7 @@ tar -xzf dsh-github-0.2.1.tgz                     # 解出 package/ 目录
 > `Accept: application/octet-stream`。
 
 然后在 Harness 里用 `plugin_manager` 的 `install_bundle` 指向解出的
-`package/` 目录即可。
+`package/` 目录即可；DSH GO 也可以直接 `dsh plugin --profile web add /path/to/package`。
 
 **从源码目录安装**：把本仓库目录作为 bundle 安装（设置 → 插件 → 从目录安装，
 或 `plugin_manager` 工具的 `install_bundle`）。安装后：

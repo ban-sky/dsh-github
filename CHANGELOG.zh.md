@@ -1,0 +1,65 @@
+# 变更日志
+
+[English](CHANGELOG.md) | [中文](CHANGELOG.zh.md)
+
+本插件的所有重要变更都记在这里。格式参考
+[Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循
+[语义化版本](https://semver.org/lang/zh-CN/)。
+
+## [0.3.0] - 2026-11-08
+
+### 新增
+
+- **每次发布出两个安装包。** `scripts/pack.mjs` 从同一份源码构建两个包，推
+  `v*` 标签时由 `.github/workflows/release.yml` 挂到 GitHub Release：
+  `dsh-github-<版本>.tgz` 给 DSH 网页版 / 桌面端（只有 Web UI），
+  `dsh-github-<版本>-dsh-go.tgz` 给 DSH GO 手机 App。网页版包不含
+  `lib/dsh-go.js` 和 `dshGo` 清单，`index.js` 按需加载，所以两个包都不带用不上的
+  代码。
+- **DSH GO 原生界面。** 在提供 `dshGo` 服务的宿主上，插件会注册一个原生面板
+  （账号状态、设备码登录、Agent 工具开关，以及会话目录的刷新/更新/拉取/推送/
+  提交/克隆/新建并推送），外加三个输入框入口：Client ID、提交信息、`owner/name`
+  都从消息框取。两套界面共用同一个服务实例，凭据记录与设置文件都只有一份；没有
+  `dshGo` 的宿主行为不变。
+- 只有当 App 上报 `form` 与 `textField` 组件能力时才画原生表单；否则面板改为说明
+  这些输入框入口——点不动的表单比没有表单更糟。
+
+## [0.2.1] - 2026-11-08
+
+### 修复
+
+- **手机网页版的按钮。** 窄屏（视口 ≤ 640px）下 GitHub 按钮折叠成 26px 的分支图标，
+  不再把标签挤成竖排。标签仍以视觉隐藏的方式留在 DOM 里，控件保留无障碍名称；
+  `flex:none` 与 `white-space:nowrap` 让它不会被任何窄容器压扁。
+- **会话面板里的过期令牌。** 令牌过期时，输入框下方的入口改为显示登录提示，而不是
+  一组只会以 `token-invalid` 失败的操作按钮。
+- 手机上对话框的内边距更紧凑，最大高度更高。
+
+## [0.2.0] - 2026-11-06
+
+### 新增
+
+- **会话目录操作。** 输入框上方的 GitHub 按钮作用于当前会话的工作目录：把
+  `owner/name` 克隆到 `<会话目录>/<name>`、创建仓库并把该目录发布出去
+  （`git init -b main`、origin、提交、推送）、拉取（`--ff-only`）、更新
+  （`git fetch --prune`）、提交、推送。
+- 客户端只发送 `sessionId`；Host 通过 `agents` 与 `workingDirectory` 服务解析目录，
+  用 `realpath` 复核，对未知或未激活的会话返回 `session-not-found`。
+- 目录本身不是仓库时，只有当它里面恰好有一个直接子仓库（也就是刚克隆的那个）才沿用它；
+  有多个子仓库时不作猜测。
+
+### 修复
+
+- `runGit` 现在给子进程服务传显式的 `cwd`（它要求这个参数）。缺了它，真实运行时每次
+  git 调用都会以 `Cannot read properties of undefined (reading 'includes')` 失败。
+- 拉取/推送/提交拒绝在错误的仓库里执行，也绝不碰带内嵌凭据的 remote。
+
+## [0.1.0] - 2026-11-05
+
+### 新增
+
+- 首个版本：通过 DSH 的授权与凭据服务完成 GitHub 设备码登录，一个
+  `设置 → GitHub` 页面（登录、仓库列表、创建、克隆到克隆根目录、本地检出状态、
+  拉取、提交、推送），以及可选的 `github` agent 工具。
+- 安全基线：令牌只存在 DSH 凭据库，经子进程环境变量加一次性内联 credential helper
+  交给 git，所有路径与 remote 都在 Host 侧校验，所有错误都脱敏。

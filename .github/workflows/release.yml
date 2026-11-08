@@ -16,6 +16,8 @@ on:
 
 permissions:
   contents: write
+  # npm provenance: the published tarball is attested as built here.
+  id-token: write
 
 concurrency:
   group: release-${{ github.event.inputs.tag || github.ref_name }}
@@ -24,6 +26,9 @@ concurrency:
 jobs:
   packages:
     runs-on: ubuntu-latest
+    env:
+      # Repository secret; without it the npm step warns and skips.
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -56,6 +61,19 @@ jobs:
           fi
           grep -q '"dshGo"' "$RUNNER_TEMP/go.package.json"
           echo "$version ok"
+      - name: Publish to npm
+        if: ${{ env.NPM_TOKEN != '' }}
+        run: |
+          set -euo pipefail
+          name="$(node -p "require('./package.json').name")"
+          version="$(node -p "require('./package.json').version")"
+          if npm view "${name}@${version}" version --registry https://registry.npmjs.org >/dev/null 2>&1; then
+            echo "${name}@${version} is already on npm; skipping"
+            exit 0
+          fi
+          printf '//registry.npmjs.org/:_authToken=%s\n' "$NPM_TOKEN" > "$RUNNER_TEMP/npmrc"
+          npm publish --userconfig "$RUNNER_TEMP/npmrc" --access public --provenance
+
       - name: Publish the release assets
         env:
           GH_TOKEN: ${{ github.token }}

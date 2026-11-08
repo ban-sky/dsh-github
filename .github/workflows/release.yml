@@ -1,0 +1,59 @@
+name: release
+
+# Every installation package comes from here: pushing a `v*` tag (or running
+# this workflow manually for an existing tag) builds both variants and attaches
+# them to that tag's GitHub Release.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to (re)build, e.g. v0.3.0
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build both installation packages
+        run: node scripts/pack.mjs
+      - name: Check the two artifacts
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./package.json').version")"
+          web="dist/dsh-github-${version}.tgz"
+          go="dist/dsh-github-${version}-dsh-go.tgz"
+          test -f "$web" && test -f "$go" && test -f dist/SHA256SUMS.txt
+          # The web package must not carry the native surface, the DSH GO one must.
+          if tar -tzf "$web" | grep -q 'package/lib/dsh-go.js'; then
+            echo "web package unexpectedly ships lib/dsh-go.js" >&2
+            exit 1
+          fi
+          tar -tzf "$go" | grep -q 'package/lib/dsh-go.js'
+          tar -xOzf "$web" package/package.json | grep -q '"dshGo"' && exit 1 || true
+          tar -xOzf "$go" package/package.json | grep -q '"dshGo"'
+      - name: Publish the release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "$TAG" --generate-notes
+          gh release upload "$TAG" dist/dsh-github-*.tgz dist/SHA256SUMS.txt --clobber
+          gh release view "$TAG" --json assets --jq '.assets[].name'

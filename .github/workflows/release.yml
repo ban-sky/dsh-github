@@ -73,7 +73,13 @@ jobs:
           fi
           # A secret pasted with a trailing newline would corrupt the .npmrc line.
           token="$(printf '%s' "$NPM_TOKEN" | tr -d '[:space:]')"
-          echo "npm token length: ${#token}"
+          echo "npm token length: ${#token}, prefix: ${token:0:4}"
+          # No npm token is shorter than 36 characters; a shorter secret is almost
+          # always the token's *name* pasted instead of its value.
+          if [ "${#token}" -lt 36 ]; then
+            echo "::error::NPM_TOKEN is ${#token} characters; npm tokens are 36+. The secret probably holds the token name, not the token."
+            exit 1
+          fi
           : > "$RUNNER_TEMP/npmrc"
           printf '//registry.npmjs.org/:_authToken=%s\n' "$token" >> "$RUNNER_TEMP/npmrc"
           echo "package: ${name}@${version}"

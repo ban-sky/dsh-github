@@ -41,14 +41,21 @@ command line, a log line or a Tool result.
 
 **From a release (recommended):**
 
+Open the [Releases](https://github.com/ban-sky/dsh-github/releases) page in a
+browser where you are signed in, and download `dsh-github-0.2.1.tgz` plus
+`SHA256SUMS.txt`; or use the GitHub CLI:
+
 ```bash
-# private repository: the download needs a GitHub token, or use the
-# Releases page in a browser where you are signed in
-curl -L -H "Authorization: Bearer $GITHUB_TOKEN" \
-  -o dsh-github-0.2.1.tgz \
-  https://github.com/ban-sky/dsh-github/releases/download/v0.2.1/dsh-github-0.2.1.tgz
-tar -xzf dsh-github-0.2.1.tgz          # creates package/
+gh release download v0.2.1 -R ban-sky/dsh-github   # needs gh auth login first
+sha256sum -c SHA256SUMS.txt
+tar -xzf dsh-github-0.2.1.tgz                     # creates package/
 ```
+
+> The plain `releases/download/...` URL of a **private** repository only accepts
+> a browser session; an API token gets a 404 there. For scripts use
+> `gh release download`, or call
+> `GET /repos/ban-sky/dsh-github/releases/assets/<id>` with
+> `Accept: application/octet-stream`.
 
 Then install `package/` with the Harness `plugin_manager` tool
 (`install_bundle target:/path/to/package`).

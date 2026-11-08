@@ -32,13 +32,20 @@ git config、命令行参数、日志或 Tool 返回值。
 
 **从 Release 下载安装包**（推荐）：
 
+在浏览器里登录 GitHub 后打开
+[Releases](https://github.com/ban-sky/dsh-github/releases)，下载
+`dsh-github-0.2.1.tgz` 与 `SHA256SUMS.txt`；或者用 GitHub CLI：
+
 ```bash
-# 私有仓库：下载需要带 GitHub 令牌，或在浏览器登录后从 Releases 页面下载
-curl -L -H "Authorization: Bearer $GITHUB_TOKEN" \
-  -o dsh-github-0.2.1.tgz \
-  https://github.com/ban-sky/dsh-github/releases/download/v0.2.1/dsh-github-0.2.1.tgz
-tar -xzf dsh-github-0.2.1.tgz          # 解出 package/ 目录
+gh release download v0.2.1 -R ban-sky/dsh-github   # 需要先 gh auth login
+sha256sum -c SHA256SUMS.txt
+tar -xzf dsh-github-0.2.1.tgz                     # 解出 package/ 目录
 ```
+
+> 私有仓库的 `releases/download/...` 直链只认浏览器登录态，API 令牌访问会
+> 404；脚本里请用 `gh release download`，或调
+> `GET /repos/ban-sky/dsh-github/releases/assets/<id>` 并带
+> `Accept: application/octet-stream`。
 
 然后在 Harness 里用 `plugin_manager` 的 `install_bundle` 指向解出的
 `package/` 目录即可。

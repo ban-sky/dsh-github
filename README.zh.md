@@ -30,8 +30,21 @@ git config、命令行参数、日志或 Tool 返回值。
 
 ## 安装
 
-把本目录作为 bundle 安装（设置 → 插件 → 从目录安装，或 Harness 的
-`plugin_manager` 工具的 `install_bundle`）。安装后：
+**从 Release 下载安装包**（推荐）：
+
+```bash
+# 私有仓库：下载需要带 GitHub 令牌，或在浏览器登录后从 Releases 页面下载
+curl -L -H "Authorization: Bearer $GITHUB_TOKEN" \
+  -o dsh-github-0.2.1.tgz \
+  https://github.com/ban-sky/dsh-github/releases/download/v0.2.1/dsh-github-0.2.1.tgz
+tar -xzf dsh-github-0.2.1.tgz          # 解出 package/ 目录
+```
+
+然后在 Harness 里用 `plugin_manager` 的 `install_bundle` 指向解出的
+`package/` 目录即可。
+
+**从源码目录安装**：把本仓库目录作为 bundle 安装（设置 → 插件 → 从目录安装，
+或 `plugin_manager` 工具的 `install_bundle`）。安装后：
 
 - Host 端：`/api/github` 认证路由、`github` 授权流程，以及（开启后）`github` 工具。
 - Client 端：一个 `设置 → GitHub` 页面。

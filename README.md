@@ -39,9 +39,23 @@ command line, a log line or a Tool result.
 
 ## Install
 
-Install this directory as a bundle (Settings → Plugins → install from
-directory, or the Harness `plugin_manager` tool with `install_bundle`). The
-bundle mounts:
+**From a release (recommended):**
+
+```bash
+# private repository: the download needs a GitHub token, or use the
+# Releases page in a browser where you are signed in
+curl -L -H "Authorization: Bearer $GITHUB_TOKEN" \
+  -o dsh-github-0.2.1.tgz \
+  https://github.com/ban-sky/dsh-github/releases/download/v0.2.1/dsh-github-0.2.1.tgz
+tar -xzf dsh-github-0.2.1.tgz          # creates package/
+```
+
+Then install `package/` with the Harness `plugin_manager` tool
+(`install_bundle target:/path/to/package`).
+
+**From a source checkout:** install this directory as a bundle (Settings →
+Plugins → install from directory, or the Harness `plugin_manager` tool with
+`install_bundle`). The bundle mounts:
 
 - Host: the `/api/github` authenticated route, the `github` authorization flow,
   and (when enabled) the `github` tool.

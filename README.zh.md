@@ -35,7 +35,7 @@ git config、命令行参数、日志或 Tool 返回值。
 **从 npm 安装**（插件市场用的就是这个）：
 
 在 Harness 里用 `plugin_manager` 的 `install_bundle`，target 写精确版本
-`@ban-sky/dsh-github@0.4.0`。包名带 scope 是因为 `dsh-github` 在 npm 上已被他人
+`@ban-sky/dsh-github@0.4.1`。包名带 scope 是因为 `dsh-github` 在 npm 上已被他人
 占用；Release 里的安装包内容相同。
 
 **从 Release 下载安装包**（推荐）：
@@ -97,7 +97,13 @@ tar -xzf dsh-github-0.3.0-dsh-go.tgz              # 手机用这个
    （插件只会把这一精确地址渲染成链接）。
 3. 在 GitHub 上批准。页面会自动刷新并显示已登录账号。
 
-申请的 scope 是 `repo`（含私有仓库的读写权限），GitHub 的批准页会显示该 scope。
+申请的 scope 是 `repo`（含私有仓库的读写权限）和 `workflow`（允许推送创建或修改
+`.github/workflows` 下的文件）。GitHub 的批准页会显示这两个 scope。
+
+如果你是用旧版本登录的，已存授权只有 `repo`，GitHub 会拒绝任何涉及工作流文件的推送
+（报 "refusing to allow an OAuth App to create or update workflow ... without
+`workflow` scope"）。此时设置页会显示提示和 **重新授权** 按钮：再走一次设备码授权即可
+补上 scope，账号、设置文件和本地仓库都不受影响。
 
 退出登录会立即从凭据库删除授权记录，并让正在进行的操作失效。
 

@@ -6,6 +6,21 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.4.1] - 2026-11-09
+
+### Fixed
+
+- **Workflow files can be pushed.** Sign-in now requests the `workflow` scope
+  together with `repo`, so `git push` no longer fails with "refusing to allow an
+  OAuth App to create or update workflow ... without `workflow` scope" when a
+  commit touches `.github/workflows`.
+- Tokens granted by older releases only carry `repo`. The settings page and the
+  DSH GO panel now detect the missing scope, explain that pushes touching
+  workflow files will be refused, and offer a one-click re-authorization. The
+  account, the settings file and every local repository are left untouched.
+- A push refused for that reason now reports `workflow-scope-missing` with an
+  actionable hint instead of the generic `push-rejected`.
+
 ## [0.4.0] - 2026-11-08
 
 ### Changed

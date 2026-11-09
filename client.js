@@ -161,6 +161,11 @@ window.__ModuleLoader__.load({
       'error.bodyTooLarge': '请求内容过大。',
       'error.logoutFailed': '退出登录失败。',
       'error.notSignedIn': '请先登录 GitHub。',
+      'error.workflowScope': '授权缺少 workflow 权限，GitHub 拒绝推送工作流文件。请点“重新授权”后再试。',
+      scopeMissingHint:
+        '当前授权缺少 workflow 权限，无法推送 .github/workflows 下的工作流文件。重新授权即可补上；账号与本地仓库都不受影响。',
+      reauth: '重新授权',
+      scopeMissingShort: '授权缺少 workflow 权限，推送工作流文件会被拒；请在「设置 → GitHub」里重新授权。',
     }
 
     const en = {
@@ -309,6 +314,13 @@ window.__ModuleLoader__.load({
       'error.bodyTooLarge': 'The request body was too large.',
       'error.logoutFailed': 'Signing out failed.',
       'error.notSignedIn': 'Sign in with GitHub first.',
+      'error.workflowScope':
+        'The token has no workflow scope, so GitHub refused to push workflow files. Re-authorize, then push again.',
+      scopeMissingHint:
+        'This authorization lacks the workflow scope, so pushes that touch .github/workflows are refused. Re-authorizing adds it; the account and local repositories are untouched.',
+      reauth: 'Re-authorize',
+      scopeMissingShort:
+        'The token lacks the workflow scope, so pushing workflow files will fail. Re-authorize under Settings → GitHub.',
     }
 
     /** Host error code → locale key. Unknown codes fall back to the message. */
@@ -345,6 +357,7 @@ window.__ModuleLoader__.load({
       'nothing-to-commit': 'error.nothingToCommit',
       'identity-missing': 'error.identityMissing',
       'push-rejected': 'error.pushRejected',
+      'workflow-scope-missing': 'error.workflowScope',
       'body-too-large': 'error.bodyTooLarge',
       'logout-failed': 'error.logoutFailed',
       'not-signed-in': 'error.notSignedIn',
@@ -364,6 +377,7 @@ window.__ModuleLoader__.load({
 .gh-banner{margin:0;padding:8px 12px;border-radius:var(--dsw-radius-md,8px);font-size:12px;line-height:1.5;word-break:break-word}
 .gh-banner-error{background:var(--dsw-alias-bg-danger,rgba(229,72,77,.12));color:var(--dsw-alias-label-danger,#b42318)}
 .gh-banner-ok{background:var(--dsw-alias-bg-success,rgba(46,160,67,.12));color:var(--dsw-alias-label-success,#17663a)}
+.gh-banner-warn{background:var(--dsw-alias-bg-warning,rgba(212,167,44,.16));color:var(--dsw-alias-label-warning,#8a5d00)}
 .gh-card{display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid var(--dsw-alias-settings-card-stroke,var(--dsw-alias-border-l1,rgba(0,0,0,.1)));border-radius:var(--dsw-radius-xl,12px);background:var(--dsw-alias-settings-card-fill,transparent)}
 .gh-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .gh-card-title{margin:0;font-size:13px;font-weight:600;color:var(--dsw-alias-label-primary,inherit)}
@@ -803,6 +817,10 @@ window.__ModuleLoader__.load({
             )
             if (auth.expired === true) children.push(banner('expired', tr('expired'), 'error'))
             else if (auth.unverified === true) children.push(banner('unverified', tr('unverified'), 'error'))
+            const missing = Array.isArray(auth.missingScopes) ? auth.missingScopes : []
+            if (missing.length > 0 && auth.expired !== true) {
+              children.push(banner('scope-missing', tr('scopeMissingHint'), 'warn'))
+            }
             children.push(
               h(
                 'div',
@@ -818,7 +836,11 @@ window.__ModuleLoader__.load({
                       React.Fragment,
                       null,
                       button('sign-out', tr('signOut'), () => setSignOutOpen(true)),
-                      auth.expired === true ? button('again', tr('signIn'), signIn, { primary: true }) : null,
+                      auth.expired === true
+                        ? button('again', tr('signIn'), signIn, { primary: true })
+                        : missing.length > 0
+                          ? button('reauth', tr('reauth'), signIn, { primary: true })
+                          : null,
                     ),
               ),
             )
@@ -1429,6 +1451,11 @@ window.__ModuleLoader__.load({
         }
 
         if (signedIn !== true) body.push(h('p', { className: 'gh-hint', key: 'signin' }, tr('sessionSignInHint')))
+
+        const scopes = auth !== null && Array.isArray(auth.missingScopes) ? auth.missingScopes : []
+        if (signedIn === true && scopes.length > 0) {
+          body.push(h('p', { className: 'gh-banner gh-banner-warn', key: 'scope' }, tr('scopeMissingShort')))
+        }
 
         if (repo !== null && signedIn) {
           body.push(

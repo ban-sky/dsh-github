@@ -44,7 +44,7 @@ command line, a log line or a Tool result.
 **From npm** (this is what the plugin market installs):
 
 Use the Harness `plugin_manager` tool with `install_bundle` and the exact version
-`@ban-sky/dsh-github@0.4.0` as the target. The name carries a scope because
+`@ban-sky/dsh-github@0.4.1` as the target. The name carries a scope because
 `dsh-github` is taken on npm; the Release packages contain the same code.
 
 **From a release (recommended):**
@@ -116,8 +116,16 @@ lives in [`market/dsh-go-market.json`](market/dsh-go-market.json).
 3. Approve the request. The page updates as soon as GitHub confirms, and shows
    the signed-in account.
 
-The requested scope is `repo` (read/write access to repositories, including
-private ones). GitHub shows the scope on the approval screen.
+The requested scopes are `repo` (read/write access to repositories, including
+private ones) and `workflow` (lets a push create or update files under
+`.github/workflows`). GitHub shows both on the approval screen.
+
+If you signed in with an older release, the stored grant only has `repo`, so
+GitHub refuses pushes that touch workflow files ("refusing to allow an OAuth App
+to create or update workflow ... without `workflow` scope"). Settings → GitHub
+then shows a warning with a **Re-authorize** button; one more device-flow
+approval adds the scope, and the account, settings and local repositories are
+left untouched.
 
 Sign out deletes the stored grant from the credential store immediately; the
 token is also invalidated locally for every in-flight operation.

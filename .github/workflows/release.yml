@@ -1,5 +1,8 @@
 name: release
 
+# Touching this file needs the `workflow` scope on the pushing token, which
+# dsh-github requests at sign-in since 0.4.1.
+
 # Every installation package comes from here: pushing a `v*` tag (or running
 # this workflow manually for an existing tag) builds both variants and attaches
 # them to that tag's GitHub Release.

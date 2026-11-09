@@ -6,6 +6,18 @@
 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循
 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.4.1] - 2026-11-09
+
+### 修复
+
+- **可以推送工作流文件了。** 登录时除 `repo` 外一并申请 `workflow` scope，提交涉及
+  `.github/workflows` 时 `git push` 不再报 "refusing to allow an OAuth App to
+  create or update workflow ... without `workflow` scope"。
+- 旧版本留下的令牌只有 `repo`：设置页与 DSH GO 面板现在会检测缺失的 scope，说明涉及
+  工作流文件的推送会被拒，并提供一键重新授权。账号、设置文件和本地仓库都不受影响。
+- 因缺少 scope 被拒的推送现在返回 `workflow-scope-missing` 并给出可操作的提示，而不是
+  笼统的 `push-rejected`。
+
 ## [0.4.0] - 2026-11-08
 
 ### 变更

@@ -6,6 +6,16 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.4.2] - 2026-11-10
+
+### Removed
+
+- **The plugin is no longer adapted to a plugin market.** The `market/` listing
+  files and the submission notes are gone, and the README no longer explains how
+  to publish into the DSH GO market. The `dshGo` v1 manifest, the DSH GO panel
+  (`lib/dsh-go.js`) and the two Release packages stay: installing from npm or
+  from a Release works exactly as before.
+
 ## [0.4.1] - 2026-11-09
 
 ### Fixed

@@ -6,6 +6,14 @@
 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循
 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.4.2] - 2026-11-10
+
+### 移除
+
+- **不再适配插件市场。** 删掉了 `market/` 下的上架清单与提交说明，README 也不再
+  介绍如何提交到 DSH GO 插件市场。`dshGo` 协议 v1 清单、DSH GO 面板
+  （`lib/dsh-go.js`）与两个 Release 安装包都保留，从 npm 或 Release 安装的方式不变。
+
 ## [0.4.1] - 2026-11-09
 
 ### 修复

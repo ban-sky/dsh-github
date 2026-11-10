@@ -32,10 +32,10 @@ git config、命令行参数、日志或 Tool 返回值。
 
 ## 安装
 
-**从 npm 安装**（插件市场用的就是这个）：
+**从 npm 安装**：
 
 在 Harness 里用 `plugin_manager` 的 `install_bundle`，target 写精确版本
-`@ban-sky/dsh-github@0.4.1`。包名带 scope 是因为 `dsh-github` 在 npm 上已被他人
+`@ban-sky/dsh-github@0.4.2`。包名带 scope 是因为 `dsh-github` 在 npm 上已被他人
 占用；Release 里的安装包内容相同。
 
 **从 Release 下载安装包**（推荐）：
@@ -51,10 +51,10 @@ git config、命令行参数、日志或 Tool 返回值。
 [Releases](https://github.com/ban-sky/dsh-github/releases) 下载，或者用 GitHub CLI：
 
 ```bash
-gh release download v0.3.0 -R ban-sky/dsh-github   # 需要先 gh auth login
+gh release download v0.4.2 -R ban-sky/dsh-github   # 需要先 gh auth login
 sha256sum -c SHA256SUMS.txt
-tar -xzf dsh-github-0.3.0.tgz                     # 网页版
-tar -xzf dsh-github-0.3.0-dsh-go.tgz              # 手机用这个
+tar -xzf dsh-github-0.4.2.tgz                     # 网页版
+tar -xzf dsh-github-0.4.2-dsh-go.tgz              # 手机用这个
 ```
 
 > 私有仓库的 `releases/download/...` 直链只认浏览器登录态，API 令牌访问会
@@ -71,16 +71,13 @@ tar -xzf dsh-github-0.3.0-dsh-go.tgz              # 手机用这个
 - Host 端：`/api/github` 认证路由、`github` 授权流程，以及（开启后）`github` 工具。
 - Client 端：一个 `设置 → GitHub` 页面。
 
-## DSH GO 插件市场
+## DSH GO
 
-插件适配了 [DSH GO 插件市场](https://github.com/ccch1mneyyy/dsh-go-market)：用
-`package.json` 的 `dshGo` 协议 v1 声明原生面板与输入框入口（`minApp` 为 1.0.13），
-市场会据此标出 `adapted: true`、`minApp` 与 `features: native-slots`。
+插件同时提供 DSH GO 原生界面：`package.json` 的 `dshGo` 协议 v1 声明原生面板与
+输入框入口（`minApp` 1.0.13），`-dsh-go.tgz` 里带 `lib/dsh-go.js`。npm 上的包同时
+包含 Web UI 与这套界面，因此 `@ban-sky/dsh-github` 对两种宿主都适用。
 
-市场只收 npm 上的精确版本，所以包名是 `@ban-sky/dsh-github`（`dsh-github` 已被他人
-占用）。每次发版，工作流把该版本发到 npm，再上传 GitHub Release 附件；没有
-`NPM_TOKEN` 密钥时只发 Release，并在日志里给出警告。提交市场用的条目在
-[`market/dsh-go-market.json`](market/dsh-go-market.json)。
+本插件不提交任何插件市场，分发渠道只有 npm 与 GitHub Release。
 
 ## 配置：创建 OAuth App
 

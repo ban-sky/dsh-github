@@ -41,10 +41,10 @@ command line, a log line or a Tool result.
 
 ## Install
 
-**From npm** (this is what the plugin market installs):
+**From npm:**
 
 Use the Harness `plugin_manager` tool with `install_bundle` and the exact version
-`@ban-sky/dsh-github@0.4.1` as the target. The name carries a scope because
+`@ban-sky/dsh-github@0.4.2` as the target. The name carries a scope because
 `dsh-github` is taken on npm; the Release packages contain the same code.
 
 **From a release (recommended):**
@@ -61,10 +61,10 @@ Open the [Releases](https://github.com/ban-sky/dsh-github/releases) page in a
 browser where you are signed in, or use the GitHub CLI:
 
 ```bash
-gh release download v0.3.0 -R ban-sky/dsh-github   # needs gh auth login first
+gh release download v0.4.2 -R ban-sky/dsh-github   # needs gh auth login first
 sha256sum -c SHA256SUMS.txt
-tar -xzf dsh-github-0.3.0.tgz                     # web
-tar -xzf dsh-github-0.3.0-dsh-go.tgz              # phone
+tar -xzf dsh-github-0.4.2.tgz                     # web
+tar -xzf dsh-github-0.4.2-dsh-go.tgz              # phone
 ```
 
 > The plain `releases/download/...` URL of a **private** repository only accepts
@@ -85,18 +85,15 @@ Plugins → install from directory, or the Harness `plugin_manager` tool with
   and (when enabled) the `github` tool.
 - Client: one `Settings → GitHub` page.
 
-## DSH GO market
+## DSH GO
 
-The plugin is adapted to the [DSH GO market](https://github.com/ccch1mneyyy/dsh-go-market):
-its `package.json.dshGo` v1 manifest declares the native panel and the composer
-entries (`minApp` 1.0.13), which the market reports as `adapted: true`, `minApp`
-and `features: native-slots`.
+The plugin also speaks the DSH GO surface: `package.json.dshGo` (protocol v1)
+declares the native panel and the composer entries (`minApp` 1.0.13), and the
+`-dsh-go.tgz` package ships `lib/dsh-go.js`. The npm package carries the Web UI
+and that surface together, so `@ban-sky/dsh-github` fits either host.
 
-The market only lists exact npm versions, so the package is published as
-`@ban-sky/dsh-github` (`dsh-github` is taken on npm). Each release publishes that
-version to npm and then uploads the GitHub Release assets; without an `NPM_TOKEN`
-secret only the Release runs and the log carries a warning. The entry to submit
-lives in [`market/dsh-go-market.json`](market/dsh-go-market.json).
+This plugin is not submitted to any plugin market. npm and the GitHub Release are
+the only distribution channels.
 
 ## Setup: create the OAuth App
 

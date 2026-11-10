@@ -6,6 +6,19 @@
 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循
 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.1.1] - 2026-11-10
+
+### 修复
+
+- **装了本插件时网页版可能整页打不开。** 客户端 bundle 注册用的模块 id 是
+  `dsh-github`，而加载器是按包名 `@ban-sky/dsh-github` 建行的，两者对不上。1.1.0
+  合并安装包后这个问题变成致命：宿主模块表里还留着改名前的旧行时，同一份 bundle
+  会被排队两次，第二次执行抛
+  `duplicate factory registration for "dsh-github"`，该批次里它之后的模块（包括插件
+  自己）全部加载失败。现在 bundle 以 `@ban-sky/dsh-github` 注册，与包名一致。已经
+  出现旧 `dsh-github` 行的宿主还需重启一次 `dsh web` 才会清掉。
+- User-Agent 改为 `dsh-github/1.1.1`。
+
 ## [1.1.0] - 2026-11-10
 
 ### 变更

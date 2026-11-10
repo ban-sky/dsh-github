@@ -47,7 +47,7 @@ command line, a log line or a Tool result.
 **From npm:**
 
 Use the Harness `plugin_manager` tool with `install_bundle` and the exact version
-`@ban-sky/dsh-github@1.1.0` as the target. The name carries a scope because
+`@ban-sky/dsh-github@1.1.1` as the target. The name carries a scope because
 `dsh-github` is taken on npm; the Release package contains the same code.
 
 **From a release (recommended):**
@@ -58,9 +58,9 @@ and the DSH GO phone app. It unpacks to `package/`. Open the
 browser where you are signed in, or use the GitHub CLI:
 
 ```bash
-gh release download v1.1.0 -R ban-sky/dsh-github   # needs gh auth login first
+gh release download v1.1.1 -R ban-sky/dsh-github   # needs gh auth login first
 sha256sum -c SHA256SUMS.txt
-tar -xzf dsh-github-1.1.0.tgz
+tar -xzf dsh-github-1.1.1.tgz
 ```
 
 > The plain `releases/download/...` URL of a **private** repository only accepts
@@ -72,6 +72,11 @@ tar -xzf dsh-github-1.1.0.tgz
 Then install `package/` with the Harness `plugin_manager` tool
 (`install_bundle target:/path/to/package`). On a phone you can also run
 `dsh plugin --profile web add /path/to/package`.
+
+**Upgrading from 1.1.0:** the Web UI of a host that ran 1.1.0 keeps a stale
+`dsh-github` module row in memory, so restart `dsh web` once after installing
+1.1.1. Without the restart the page can still hit a duplicate-registration
+boot failure caused by the fixed module id.
 
 **From a source checkout:** install this directory as a bundle (Settings →
 Plugins → install from directory, or the Harness `plugin_manager` tool with
@@ -248,7 +253,7 @@ the UI.
 
 ```
 index.js            Host entry (route, authorization flow, optional tool)
-client.js           Web UI: Settings → GitHub
+client.js           Web UI: Settings → GitHub (registers under the package name)
 lib/github-api.js   Device flow + REST calls (token only in an auth header)
 lib/git.js          git invocations, remote/URL and path containment checks
 lib/service.js      State machine, dispatch, redaction boundary

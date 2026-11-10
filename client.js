@@ -1,5 +1,9 @@
 window.__ModuleLoader__.load({
-  id: 'dsh-github',
+  // Must equal the package name: the module registry keys factories by the id
+  // declared here and matches it against the loader row, which is built from
+  // package.json#name. A bare name here makes the row read "loaded without
+  // registering" (and collide with a stale bare-name row).
+  id: '@ban-sky/dsh-github',
 
   factory(require) {
     const React = require('react')

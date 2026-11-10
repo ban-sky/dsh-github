@@ -6,6 +6,22 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] - 2026-11-10
+
+### Fixed
+
+- **The Web UI could fail to boot while this plugin was installed.** The client
+  bundle registered itself under the module id `dsh-github`, but the loader
+  builds its row id from the package name, `@ban-sky/dsh-github`. The merge in
+  1.1.0 made the mismatch fatal: a host that still had the pre-rename row in its
+  module table queued the same bundle twice, so the second execution threw
+  `duplicate factory registration for "dsh-github"` and every module after it in
+  that batch (including the plugin itself) failed to load. The bundle now
+  registers as `@ban-sky/dsh-github`, matching the package name. Hosts that were
+  already showing the stale `dsh-github` row also need a restart of `dsh web` to
+  drop it.
+- User-Agent is `dsh-github/1.1.1`.
+
 ## [1.1.0] - 2026-11-10
 
 ### Changed

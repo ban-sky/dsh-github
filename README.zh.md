@@ -37,7 +37,7 @@ git config、命令行参数、日志或 Tool 返回值。
 **从 npm 安装**：
 
 在 Harness 里用 `plugin_manager` 的 `install_bundle`，target 写精确版本
-`@ban-sky/dsh-github@1.1.0`。包名带 scope 是因为 `dsh-github` 在 npm 上已被他人
+`@ban-sky/dsh-github@1.1.1`。包名带 scope 是因为 `dsh-github` 在 npm 上已被他人
 占用；Release 里的安装包内容相同。
 
 **从 Release 下载安装包**（推荐）：
@@ -48,9 +48,9 @@ git config、命令行参数、日志或 Tool 返回值。
 [Releases](https://github.com/ban-sky/dsh-github/releases) 下载，或者用 GitHub CLI：
 
 ```bash
-gh release download v1.1.0 -R ban-sky/dsh-github   # 需要先 gh auth login
+gh release download v1.1.1 -R ban-sky/dsh-github   # 需要先 gh auth login
 sha256sum -c SHA256SUMS.txt
-tar -xzf dsh-github-1.1.0.tgz
+tar -xzf dsh-github-1.1.1.tgz
 ```
 
 > 私有仓库的 `releases/download/...` 直链只认浏览器登录态，API 令牌访问会
@@ -75,6 +75,10 @@ tar -xzf dsh-github-1.1.0.tgz
 宿主都适用。
 
 本插件不提交任何插件市场，分发渠道只有 npm 与 GitHub Release。
+
+**从 1.1.0 升级：** 跑过 1.1.0 的宿主会在内存里留下旧的 `dsh-github` 模块行，
+装好 1.1.1 后请重启一次 `dsh web`。不重启的话，页面仍可能因为模块 id（本次已修）
+而出现重复注册的启动失败。
 
 ## 配置：创建 OAuth App
 
@@ -208,7 +212,7 @@ DSH GO 的手机界面是 Flutter 原生的，画不了 Web UI。在提供 `dshG
 
 ```
 index.js            Host 入口（路由、授权流程、可选工具）
-client.js           Web UI：设置 → GitHub
+client.js           Web UI：设置 → GitHub（以包名注册模块）
 lib/github-api.js   设备码流程 + REST 调用（令牌只放在 auth 头）
 lib/git.js          git 调用、remote/URL 与路径包含性校验
 lib/service.js      状态机、dispatch、脱敏边界

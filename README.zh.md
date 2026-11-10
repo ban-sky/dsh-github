@@ -19,6 +19,8 @@ git config、命令行参数、日志或 Tool 返回值。
   --ff-only`；提交指定路径（或全部改动）并推送。
 - **会话目录操作** —— 每个会话的输入框旁有 GitHub 按钮：在会话工作目录里克隆仓库、
   新建仓库并推送（发布当前目录）、拉取、更新（fetch）和提交/推送。
+- **工作流文件** —— `.github/workflows` 下的文件同样可以通过“提交 + 推送”新增、
+  修改、删除（登录时申请 `workflow` scope；缺失时返回 `workflow-scope-missing`）。
 - **Agent 工具**（`github`，默认关闭）—— 与设置页相同的操作，开启后模型可使用。
 - **中英双语界面**，跟随 Harness 的界面语言。
 
@@ -35,7 +37,7 @@ git config、命令行参数、日志或 Tool 返回值。
 **从 npm 安装**：
 
 在 Harness 里用 `plugin_manager` 的 `install_bundle`，target 写精确版本
-`@ban-sky/dsh-github@0.4.2`。包名带 scope 是因为 `dsh-github` 在 npm 上已被他人
+`@ban-sky/dsh-github@1.0.0`。包名带 scope 是因为 `dsh-github` 在 npm 上已被他人
 占用；Release 里的安装包内容相同。
 
 **从 Release 下载安装包**（推荐）：
@@ -51,10 +53,10 @@ git config、命令行参数、日志或 Tool 返回值。
 [Releases](https://github.com/ban-sky/dsh-github/releases) 下载，或者用 GitHub CLI：
 
 ```bash
-gh release download v0.4.2 -R ban-sky/dsh-github   # 需要先 gh auth login
+gh release download v1.0.0 -R ban-sky/dsh-github   # 需要先 gh auth login
 sha256sum -c SHA256SUMS.txt
-tar -xzf dsh-github-0.4.2.tgz                     # 网页版
-tar -xzf dsh-github-0.4.2-dsh-go.tgz              # 手机用这个
+tar -xzf dsh-github-1.0.0.tgz                     # 网页版
+tar -xzf dsh-github-1.0.0-dsh-go.tgz              # 手机用这个
 ```
 
 > 私有仓库的 `releases/download/...` 直链只认浏览器登录态，API 令牌访问会
@@ -119,6 +121,20 @@ workingDirectory 服务自行解析该会话已提交的工作目录，客户端
 
 会话目录本身不是仓库时，插件会识别目录里**唯一**的直接子仓库（即刚克隆的那个），
 并在后续操作中沿用它；有多个子仓库时不作猜测。
+
+### 工作流文件
+
+`.github/workflows` 下的文件需要登录时申请的 `workflow` scope，除此之外与普通文件
+没有区别。下面三种情况都已对着真实仓库验证：
+
+| 场景 | 做法 |
+| --- | --- |
+| 新增 | 写好 `.yml`，然后 `commit` 带 `push: true`。不传 `files` 时插件执行 `git add -A`，新文件会被收进暂存区。 |
+| 修改 | 改完 `.yml` 后同样 `commit` 带 `push: true`（暂存规则一致）。 |
+| 删除 | 先 `git rm` 再提交，或者直接删掉文件、不传 `files` 提交——`git add -A` 会把删除暂存；传 `files: [".github/workflows/x.yml"]` 也能暂存删除，因为插件执行的是 `git add -- <paths>`。 |
+
+缺少 scope 时推送涉及工作流的文件过去只报笼统的 `push-rejected`；从 0.4.1 起改为
+`workflow-scope-missing`，设置页会给出**重新授权**按钮。
 
 按钮会随屏幕宽度自适应：桌面端显示“GitHub”文字标签，**手机网页版（视口宽度
 ≤ 640px）折叠成 26px 的分支图标按钮**，避免窄容器把文字挤成竖排；图标按钮仍带

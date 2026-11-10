@@ -1,6 +1,6 @@
 {
   "name": "@ban-sky/dsh-github",
-  "version": "0.4.2",
+  "version": "1.0.0",
   "description": "GitHub integration for DSH: official device-flow sign-in, repository creation, cloning, pull, commit and push. Security first.",
   "type": "module",
   "engines": {

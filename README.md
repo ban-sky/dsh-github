@@ -25,6 +25,9 @@ command line, a log line or a Tool result.
 - **Session folder actions** — the GitHub button above the composer clones into,
   publishes, pulls, updates (fetch) and pushes the current session working
   directory.
+- **Workflow files** — files under `.github/workflows` can be created, updated
+  and deleted through the same commit + push actions (the `workflow` scope is
+  requested at sign-in and its absence is reported as `workflow-scope-missing`).
 - **Agent tool** (`github`, off by default) — the same operations as a Tool, so
   the model can act on GitHub when the user enables it.
 - **Bilingual UI** — Chinese and English, following the Harness locale.
@@ -44,7 +47,7 @@ command line, a log line or a Tool result.
 **From npm:**
 
 Use the Harness `plugin_manager` tool with `install_bundle` and the exact version
-`@ban-sky/dsh-github@0.4.2` as the target. The name carries a scope because
+`@ban-sky/dsh-github@1.0.0` as the target. The name carries a scope because
 `dsh-github` is taken on npm; the Release packages contain the same code.
 
 **From a release (recommended):**
@@ -61,10 +64,10 @@ Open the [Releases](https://github.com/ban-sky/dsh-github/releases) page in a
 browser where you are signed in, or use the GitHub CLI:
 
 ```bash
-gh release download v0.4.2 -R ban-sky/dsh-github   # needs gh auth login first
+gh release download v1.0.0 -R ban-sky/dsh-github   # needs gh auth login first
 sha256sum -c SHA256SUMS.txt
-tar -xzf dsh-github-0.4.2.tgz                     # web
-tar -xzf dsh-github-0.4.2-dsh-go.tgz              # phone
+tar -xzf dsh-github-1.0.0.tgz                     # web
+tar -xzf dsh-github-1.0.0-dsh-go.tgz              # phone
 ```
 
 > The plain `releases/download/...` URL of a **private** repository only accepts
@@ -144,6 +147,22 @@ workingDirectory services, so the Client can never name an arbitrary path.
 When the session folder is not itself a repository, the plugin uses the **single**
 immediate child repository (the one just cloned) for later actions. With more
 than one child repository it refuses to guess.
+
+### Workflow files
+
+Files under `.github/workflows` need the `workflow` scope, which sign-in requests,
+and they are ordinary commit targets otherwise. All three cases are verified
+against a live repository:
+
+| Case | How to do it |
+| --- | --- |
+| Create | Write the `.yml`, then `commit` with `push: true`. With no `files` the plugin stages everything (`git add -A`), so a new file is picked up. |
+| Update | Edit the `.yml`, then `commit` with `push: true` (same staging rule). |
+| Delete | Either `git rm` first and commit, or just remove the file and commit with `files` omitted: `git add -A` stages the deletion. Passing `files: [".github/workflows/x.yml"]` also stages a removal, because the plugin runs `git add -- <paths>`. |
+
+A push that touches a workflow file without the scope previously failed with a
+generic `push-rejected`; since 0.4.1 it reports `workflow-scope-missing` and the
+settings page offers a one-click re-authorization.
 
 The button adapts to the viewport: on desktop it shows the “GitHub” label, and on
 the phone web UI (viewport ≤ 640px) it collapses to a 26px branch icon so a narrow

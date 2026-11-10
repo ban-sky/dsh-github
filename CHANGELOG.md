@@ -6,6 +6,25 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.0] - 2026-11-10
+
+### Added
+
+- **Workflow files are a supported commit target.** Creating, updating and
+  deleting files under `.github/workflows` through `commit` (with `push`) is
+  verified end to end against a live repository, both with the default
+  "stage everything" mode and with an explicit `files` list. Deleting a workflow
+  works either when the removal is already staged (`git rm`) or when it is only
+  present in the working tree and `add -A` picks it up.
+- The README documents the three cases with the exact actions to call.
+
+### Changed
+
+- Version 1.0.0 marks the feature set as stable: sign-in, repository creation,
+  cloning, local and session-folder status, pull, fetch, commit, push and the
+  agent tool have all been exercised against the real GitHub API.
+- User-Agent is `dsh-github/1.0.0`.
+
 ## [0.4.2] - 2026-11-10
 
 ### Removed

@@ -1,15 +1,18 @@
 #!/usr/bin/env node
 /**
- * Build the two release artifacts from this single source tree.
+ * Build the release artifact from this single source tree.
  *
- *   dsh-github-<version>.tgz           Web UI only: no native surface and no
- *                                      `dshGo` manifest, for DSH Web / desktop
- *   dsh-github-<version>-dsh-go.tgz    Web UI + the DSH GO panel and composer
- *                                      entries, for the phone app
+ *   dsh-github-<version>.tgz    one package for every host: the Web UI, the
+ *                               `dshGo` v1 manifest and the DSH GO panel /
+ *                               composer entries (`lib/dsh-go.js`)
  *
- * Both unpack to a `package/` directory, the layout `plugin_manager`'s
+ * The archive unpacks to a `package/` directory, the layout `plugin_manager`'s
  * `install_bundle` and `dsh plugin add <dir>` expect. `dist/SHA256SUMS.txt`
- * lists both hashes in `sha256sum -c` format.
+ * lists its hash in `sha256sum -c` format.
+ *
+ * The DSH GO surface costs nothing on a host that has no `dshGo` service:
+ * `index.js` only imports `lib/dsh-go.js` after that service exists, so Web and
+ * desktop hosts never load it.
  *
  * No dependencies: plain Node plus the system `tar`.
  */
@@ -23,8 +26,8 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const dist = join(root, 'dist')
 const stage = join(dist, '.stage')
 
-/** Everything both artifacts ship. */
-const SHARED = ['index.js', 'client.js', 'cordis.patch.yml', 'lib', 'locale', 'icon.svg', 'README.md', 'README.zh.md', 'LICENSE']
+/** Everything the package ships. */
+const FILES = ['index.js', 'client.js', 'cordis.patch.yml', 'lib', 'locale', 'icon.svg', 'README.md', 'README.zh.md', 'LICENSE']
 
 /**
  * Recursive copy without relying on `fs.cp`'s experimental status.
@@ -44,24 +47,20 @@ async function copy(from, to) {
 }
 
 /**
- * Stage and archive one variant.
+ * Stage and archive the package.
  *
  * @param {string} name - Artifact base name.
- * @param {{native: boolean}} options - `native` keeps the DSH GO surface.
  * @returns {Promise<string>} Path of the tarball.
  */
-async function build(name, { native }) {
+async function build(name) {
   const workdir = join(stage, name)
   const pkgDir = join(workdir, 'package')
   await rm(workdir, { recursive: true, force: true })
   await mkdir(pkgDir, { recursive: true })
-  for (const entry of SHARED) await copy(join(root, entry), join(pkgDir, entry))
+  for (const entry of FILES) await copy(join(root, entry), join(pkgDir, entry))
 
+  // Shipped verbatim: one manifest describes every host.
   const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
-  if (!native) {
-    delete manifest.dshGo
-    await rm(join(pkgDir, 'lib', 'dsh-go.js'), { force: true })
-  }
   await writeFile(join(pkgDir, 'package.json'), `${JSON.stringify(manifest, null, 2)}\n`)
 
   const tarball = join(dist, `${name}.tgz`)
@@ -80,14 +79,17 @@ async function sha256(file) {
 const { version } = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
 await mkdir(dist, { recursive: true })
 
-const web = await build(`dsh-github-${version}`, { native: false })
-const dshGo = await build(`dsh-github-${version}-dsh-go`, { native: true })
+// A tarball left over from an older version would otherwise be picked up by the
+// release upload's `dist/dsh-github-*.tgz` glob.
+for (const entry of await readdir(dist)) {
+  if (entry.endsWith('.tgz')) await rm(join(dist, entry), { force: true })
+}
 
-const lines = []
-for (const file of [web, dshGo]) lines.push(`${await sha256(file)}  ${file.slice(dist.length + 1)}`)
-await writeFile(join(dist, 'SHA256SUMS.txt'), `${lines.join('\n')}\n`)
+const tarball = await build(`dsh-github-${version}`)
+const name = tarball.slice(dist.length + 1)
+await writeFile(join(dist, 'SHA256SUMS.txt'), `${await sha256(tarball)}  ${name}\n`)
 await rm(stage, { recursive: true, force: true })
 
-console.log(`built dsh-github ${version}:`)
-for (const file of [web, dshGo]) console.log(`  ${file.slice(root.length + 1)}`)
+console.log(`built ${name}:`)
+console.log(`  ${tarball.slice(root.length + 1)}`)
 console.log(`  dist/SHA256SUMS.txt`)

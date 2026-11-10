@@ -37,26 +37,20 @@ git config、命令行参数、日志或 Tool 返回值。
 **从 npm 安装**：
 
 在 Harness 里用 `plugin_manager` 的 `install_bundle`，target 写精确版本
-`@ban-sky/dsh-github@1.0.0`。包名带 scope 是因为 `dsh-github` 在 npm 上已被他人
+`@ban-sky/dsh-github@1.1.0`。包名带 scope 是因为 `dsh-github` 在 npm 上已被他人
 占用；Release 里的安装包内容相同。
 
 **从 Release 下载安装包**（推荐）：
 
-每次发布出两个包，按宿主挑一个，都解出 `package/`：
-
-| 安装包 | 给谁用 |
-| --- | --- |
-| `dsh-github-<版本>.tgz` | DSH 网页版 / 桌面端：只有 Web UI |
-| `dsh-github-<版本>-dsh-go.tgz` | DSH GO 手机 App：Web UI + 原生面板和输入框入口 |
+每次发布只出一个包，网页版、桌面端和 DSH GO 手机 App 都用它，解出 `package/` 目录：
 
 在浏览器里登录 GitHub 后打开
 [Releases](https://github.com/ban-sky/dsh-github/releases) 下载，或者用 GitHub CLI：
 
 ```bash
-gh release download v1.0.0 -R ban-sky/dsh-github   # 需要先 gh auth login
+gh release download v1.1.0 -R ban-sky/dsh-github   # 需要先 gh auth login
 sha256sum -c SHA256SUMS.txt
-tar -xzf dsh-github-1.0.0.tgz                     # 网页版
-tar -xzf dsh-github-1.0.0-dsh-go.tgz              # 手机用这个
+tar -xzf dsh-github-1.1.0.tgz
 ```
 
 > 私有仓库的 `releases/download/...` 直链只认浏览器登录态，API 令牌访问会
@@ -76,8 +70,9 @@ tar -xzf dsh-github-1.0.0-dsh-go.tgz              # 手机用这个
 ## DSH GO
 
 插件同时提供 DSH GO 原生界面：`package.json` 的 `dshGo` 协议 v1 声明原生面板与
-输入框入口（`minApp` 1.0.13），`-dsh-go.tgz` 里带 `lib/dsh-go.js`。npm 上的包同时
-包含 Web UI 与这套界面，因此 `@ban-sky/dsh-github` 对两种宿主都适用。
+输入框入口（`minApp` 1.0.13），由 `lib/dsh-go.js` 实现。这个模块只有在宿主提供了
+`dshGo` 服务之后才会被动态导入，网页版与桌面端根本不会加载它，所以一个包对两种
+宿主都适用。
 
 本插件不提交任何插件市场，分发渠道只有 npm 与 GitHub Release。
 

@@ -47,27 +47,20 @@ command line, a log line or a Tool result.
 **From npm:**
 
 Use the Harness `plugin_manager` tool with `install_bundle` and the exact version
-`@ban-sky/dsh-github@1.0.0` as the target. The name carries a scope because
-`dsh-github` is taken on npm; the Release packages contain the same code.
+`@ban-sky/dsh-github@1.1.0` as the target. The name carries a scope because
+`dsh-github` is taken on npm; the Release package contains the same code.
 
 **From a release (recommended):**
 
-Every release ships two packages; pick the one for your host. Both unpack to
-`package/`:
-
-| Package | For |
-| --- | --- |
-| `dsh-github-<version>.tgz` | DSH Web / desktop: the Web UI only |
-| `dsh-github-<version>-dsh-go.tgz` | the DSH GO phone app: Web UI plus the native panel and composer entries |
-
-Open the [Releases](https://github.com/ban-sky/dsh-github/releases) page in a
+Every release ships one package that suits every host — DSH Web, the desktop app
+and the DSH GO phone app. It unpacks to `package/`. Open the
+[Releases](https://github.com/ban-sky/dsh-github/releases) page in a
 browser where you are signed in, or use the GitHub CLI:
 
 ```bash
-gh release download v1.0.0 -R ban-sky/dsh-github   # needs gh auth login first
+gh release download v1.1.0 -R ban-sky/dsh-github   # needs gh auth login first
 sha256sum -c SHA256SUMS.txt
-tar -xzf dsh-github-1.0.0.tgz                     # web
-tar -xzf dsh-github-1.0.0-dsh-go.tgz              # phone
+tar -xzf dsh-github-1.1.0.tgz
 ```
 
 > The plain `releases/download/...` URL of a **private** repository only accepts
@@ -91,9 +84,10 @@ Plugins → install from directory, or the Harness `plugin_manager` tool with
 ## DSH GO
 
 The plugin also speaks the DSH GO surface: `package.json.dshGo` (protocol v1)
-declares the native panel and the composer entries (`minApp` 1.0.13), and the
-`-dsh-go.tgz` package ships `lib/dsh-go.js`. The npm package carries the Web UI
-and that surface together, so `@ban-sky/dsh-github` fits either host.
+declares the native panel and the composer entries (`minApp` 1.0.13), and
+`lib/dsh-go.js` implements them. That module is only imported after a host
+provides the `dshGo` service, so Web and desktop hosts never load it and the
+single package fits either host.
 
 This plugin is not submitted to any plugin market. npm and the GitHub Release are
 the only distribution channels.

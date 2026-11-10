@@ -6,6 +6,20 @@
 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循
 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.1.0] - 2026-11-10
+
+### 变更
+
+- **安装包从两个合并成一个。** 以前每次发布同时挂
+  `dsh-github-<版本>.tgz`（只有 Web UI）和 `dsh-github-<版本>-dsh-go.tgz`
+  （额外带 DSH GO 界面），用户得先弄清自己在哪个宿主上。现在 `scripts/pack.mjs`
+  只构建一个 `dsh-github-<版本>.tgz`，里面同时包含 Web UI、`dshGo` 协议 v1 清单和
+  `lib/dsh-go.js`；`index.js` 只有在宿主提供了 `dshGo` 服务之后才动态导入该模块，
+  所以网页版与桌面端依旧不会加载它。`SHA256SUMS.txt` 只列这一个文件。
+- 1.1.0 的包同时取代 1.0.0 的两个包。覆盖安装同一个 bundle 不会多出第二个
+  `github` 插件行。
+- User-Agent 改为 `dsh-github/1.1.0`。
+
 ## [1.0.0] - 2026-11-10
 
 ### 新增

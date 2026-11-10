@@ -4,8 +4,8 @@ name: release
 # dsh-github requests at sign-in since 0.4.1.
 
 # Every installation package comes from here: pushing a `v*` tag (or running
-# this workflow manually for an existing tag) builds both variants and attaches
-# them to that tag's GitHub Release.
+# this workflow manually for an existing tag) builds the one package and
+# attaches it to that tag's GitHub Release.
 on:
   push:
     tags:
@@ -39,30 +39,27 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Build both installation packages
+      - name: Build the installation package
         run: node scripts/pack.mjs
-      - name: Check the two artifacts
+      - name: Check the artifact
         run: |
           set -euo pipefail
           version="$(node -p "require('./package.json').version")"
-          web="dist/dsh-github-${version}.tgz"
-          go="dist/dsh-github-${version}-dsh-go.tgz"
-          test -f "$web" && test -f "$go" && test -f dist/SHA256SUMS.txt
+          tgz="dist/dsh-github-${version}.tgz"
+          test -f "$tgz" && test -f dist/SHA256SUMS.txt
+          # Exactly one tarball: a leftover from an older version would also be
+          # picked up by the `dist/dsh-github-*.tgz` upload glob.
+          test "$(find dist -maxdepth 1 -name 'dsh-github-*.tgz' | wc -l)" -eq 1
           # List first: piping tar into `grep -q` kills tar with SIGPIPE under pipefail.
-          tar -tzf "$web" > "$RUNNER_TEMP/web.list"
-          tar -tzf "$go" > "$RUNNER_TEMP/go.list"
-          if grep -qx 'package/lib/dsh-go.js' "$RUNNER_TEMP/web.list"; then
-            echo "web package unexpectedly ships lib/dsh-go.js" >&2
-            exit 1
-          fi
-          grep -qx 'package/lib/dsh-go.js' "$RUNNER_TEMP/go.list"
-          tar -xOzf "$web" package/package.json > "$RUNNER_TEMP/web.package.json"
-          tar -xOzf "$go" package/package.json > "$RUNNER_TEMP/go.package.json"
-          if grep -q '"dshGo"' "$RUNNER_TEMP/web.package.json"; then
-            echo "web package unexpectedly declares dshGo" >&2
-            exit 1
-          fi
-          grep -q '"dshGo"' "$RUNNER_TEMP/go.package.json"
+          tar -tzf "$tgz" > "$RUNNER_TEMP/pkg.list"
+          for entry in package/index.js package/client.js package/lib/dsh-go.js \
+                       package/lib/service.js package/locale/zh.json package/locale/en.json; do
+            grep -qx "$entry" "$RUNNER_TEMP/pkg.list"
+          done
+          tar -xOzf "$tgz" package/package.json > "$RUNNER_TEMP/pkg.package.json"
+          grep -q '"dshGo"' "$RUNNER_TEMP/pkg.package.json"
+          grep -q '"bundle"' "$RUNNER_TEMP/pkg.package.json"
+          ( cd dist && sha256sum -c SHA256SUMS.txt )
           echo "$version ok"
       - name: Publish to npm
         if: ${{ env.NPM_TOKEN != '' }}

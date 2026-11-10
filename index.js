@@ -46,8 +46,8 @@ export function apply(ctx) {
     )
 
     // DSH GO (the phone app) cannot draw the Web UI, so it gets a native panel
-    // and three composer entries backed by the same service instance. The web
-    // artifact ships without this module, so it is loaded on demand.
+    // and three composer entries backed by the same service instance. The module
+    // is loaded on demand, so a host without the `dshGo` service never evaluates it.
     child.inject(['dshGo'], (ui) => {
       const report = (error) => {
         if (typeof ui.logger?.warn === 'function') ui.logger.warn(error)

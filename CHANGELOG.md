@@ -6,6 +6,22 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-11-10
+
+### Changed
+
+- **One installation package instead of two.** Releases used to attach
+  `dsh-github-<version>.tgz` (Web UI only) and
+  `dsh-github-<version>-dsh-go.tgz` (plus the DSH GO surface), which meant
+  everyone had to know which host they were on. `scripts/pack.mjs` now builds a
+  single `dsh-github-<version>.tgz` that carries the Web UI, the `dshGo` v1
+  manifest and `lib/dsh-go.js`; `index.js` imports that module only after a host
+  provides the `dshGo` service, so Web and desktop hosts still never load it.
+  `SHA256SUMS.txt` lists that one file.
+- The `1.1.0` package supersedes both 1.0.0 artifacts. Installing it over an
+  older copy of the same bundle keeps the `github` plugin row single.
+- User-Agent is `dsh-github/1.1.0`.
+
 ## [1.0.0] - 2026-11-10
 
 ### Added

@@ -37,7 +37,7 @@ git config、命令行参数、日志或 Tool 返回值。
 **从 npm 安装**：
 
 在 Harness 里用 `plugin_manager` 的 `install_bundle`，target 写精确版本
-`@ban-sky/dsh-github@1.1.1`。包名带 scope 是因为 `dsh-github` 在 npm 上已被他人
+`@ban-sky/dsh-github@1.2.0`。包名带 scope 是因为 `dsh-github` 在 npm 上已被他人
 占用；Release 里的安装包内容相同。
 
 **从 Release 下载安装包**（推荐）：
@@ -48,9 +48,9 @@ git config、命令行参数、日志或 Tool 返回值。
 [Releases](https://github.com/ban-sky/dsh-github/releases) 下载，或者用 GitHub CLI：
 
 ```bash
-gh release download v1.1.1 -R ban-sky/dsh-github   # 需要先 gh auth login
+gh release download v1.2.0 -R ban-sky/dsh-github   # 需要先 gh auth login
 sha256sum -c SHA256SUMS.txt
-tar -xzf dsh-github-1.1.1.tgz
+tar -xzf dsh-github-1.2.0.tgz
 ```
 
 > 私有仓库的 `releases/download/...` 直链只认浏览器登录态，API 令牌访问会
@@ -69,16 +69,15 @@ tar -xzf dsh-github-1.1.1.tgz
 
 ## DSH GO
 
-插件同时提供 DSH GO 原生界面：`package.json` 的 `dshGo` 协议 v1 声明原生面板与
-输入框入口（`minApp` 1.0.13），由 `lib/dsh-go.js` 实现。这个模块只有在宿主提供了
-`dshGo` 服务之后才会被动态导入，网页版与桌面端根本不会加载它，所以一个包对两种
-宿主都适用。
+插件同时提供 DSH GO 原生界面：`package.json` 的 `dshGo` 协议 v1 声明两个面板
+（GitHub、仓库）、一条输入框状态条、两个会话动作和三个输入框入口（`minApp` 1.0.13），
+由 `lib/dsh-go.js` 实现。这个模块只有在宿主提供了 `dshGo` 服务之后才会被动态导入，
+网页版与桌面端根本不会加载它，所以一个包对两种宿主都适用。
 
 本插件不提交任何插件市场，分发渠道只有 npm 与 GitHub Release。
 
-**从 1.1.0 升级：** 跑过 1.1.0 的宿主会在内存里留下旧的 `dsh-github` 模块行，
-装好 1.1.1 后请重启一次 `dsh web`。不重启的话，页面仍可能因为模块 id（本次已修）
-而出现重复注册的启动失败。
+**从 1.1.x 升级：** 只改动了 Host 侧与 `dshGo` 清单，网页版设置页没有变化，
+装好 1.2.0 后不需要重启；手机 App 重新连一次即可拿到新的面板与状态条。
 
 ## 配置：创建 OAuth App
 
@@ -147,16 +146,22 @@ DSH GO 的手机界面是 Flutter 原生的，画不了 Web UI。在提供 `dshG
 
 - **GitHub 面板**：加号面板里的 GitHub、对话详情「插件」页签、或「全部功能」都能
   打开。里面有账号状态、设备码登录（复制设备码 / 打开授权页 / 取消 / 退出）、
-  Agent 工具开关，以及针对当前对话目录的刷新、更新、拉取、推送。
+  Agent 工具开关，以及针对当前对话目录的刷新、更新、拉取、推送；提交信息可以
+  直接在面板里填，也可以把 Client ID 填在这里保存。
+- **仓库面板**：列出账号在 GitHub 上的仓库（最多 12 个，点一行即把该仓库克隆到当前
+  对话目录），以及这台机器上已克隆的检出（分支、领先/落后、改动数）。克隆根目录和
+  已有仓库的增删仍在网页版设置页里做。
+- **输入框状态条**：输入框上方一行显示 `@账号 · 分支 · N 改动`（最多 24 字），
+  未登录、等待授权、当前目录不是仓库时换成对应提示；点它打开 GitHub 面板。
+- **会话动作**：对话右侧「信息」里有两个动作——拉取、推送当前对话目录。
 - **输入框胶囊**：原生 App 不保证有能填的表单输入框，所以需要文字的操作走输入框
   ——把 Client ID 粘进去点「存 ID」，把提交信息写进去点「提交」，把 `owner/name`
   写进去点加号里的「克隆」。
 - App 没上报 `form` / `textField` 组件能力时，面板不画输入框，只保留上面这些入口
-  和说明，避免出现点不动的假表单。
-- 同一台机器上如果装过早期的独立适配包，先卸掉它再用本插件，免得出现两个 GitHub
-  面板抢同一个位置。
+  和说明，避免出现点不动的假表单；没上报 `list` 时，仓库面板退化成一段文字摘要。
 
-网页版不受影响：没有 `dshGo` 服务的宿主上这些代码不会执行。
+网页版不受影响：没有 `dshGo` 服务的宿主上这些代码不会执行。面板里的文字跟随 App
+的 `locale`，中文环境说中文，其余说英文。
 
 ## 设置项
 

@@ -38,7 +38,8 @@ jobs:
           ref: ${{ github.event.inputs.tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # package.json declares node >=22.19, so build on a supported runtime.
+          node-version: 24
       - name: Build the installation package
         run: node scripts/pack.mjs
       - name: Check the artifact

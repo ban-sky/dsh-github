@@ -47,7 +47,7 @@ command line, a log line or a Tool result.
 **From npm:**
 
 Use the Harness `plugin_manager` tool with `install_bundle` and the exact version
-`@ban-sky/dsh-github@1.1.1` as the target. The name carries a scope because
+`@ban-sky/dsh-github@1.2.0` as the target. The name carries a scope because
 `dsh-github` is taken on npm; the Release package contains the same code.
 
 **From a release (recommended):**
@@ -58,9 +58,9 @@ and the DSH GO phone app. It unpacks to `package/`. Open the
 browser where you are signed in, or use the GitHub CLI:
 
 ```bash
-gh release download v1.1.1 -R ban-sky/dsh-github   # needs gh auth login first
+gh release download v1.2.0 -R ban-sky/dsh-github   # needs gh auth login first
 sha256sum -c SHA256SUMS.txt
-tar -xzf dsh-github-1.1.1.tgz
+tar -xzf dsh-github-1.2.0.tgz
 ```
 
 > The plain `releases/download/...` URL of a **private** repository only accepts
@@ -73,10 +73,9 @@ Then install `package/` with the Harness `plugin_manager` tool
 (`install_bundle target:/path/to/package`). On a phone you can also run
 `dsh plugin --profile web add /path/to/package`.
 
-**Upgrading from 1.1.0:** the Web UI of a host that ran 1.1.0 keeps a stale
-`dsh-github` module row in memory, so restart `dsh web` once after installing
-1.1.1. Without the restart the page can still hit a duplicate-registration
-boot failure caused by the fixed module id.
+**Upgrading from 1.1.x:** only the Host half and the `dshGo` manifest changed;
+the Web settings page is untouched, so no restart is needed. Reconnect the phone
+app once to pick up the new panel and status strip.
 
 **From a source checkout:** install this directory as a bundle (Settings →
 Plugins → install from directory, or the Harness `plugin_manager` tool with
@@ -89,7 +88,8 @@ Plugins → install from directory, or the Harness `plugin_manager` tool with
 ## DSH GO
 
 The plugin also speaks the DSH GO surface: `package.json.dshGo` (protocol v1)
-declares the native panel and the composer entries (`minApp` 1.0.13), and
+declares two panels (GitHub and Repositories), a composer status strip, two
+session actions and three composer entries (`minApp` 1.0.13), and
 `lib/dsh-go.js` implements them. That module is only imported after a host
 provides the `dshGo` service, so Web and desktop hosts never load it and the
 single package fits either host.
@@ -177,18 +177,31 @@ sign-in state machine):
 
 - **GitHub panel**: account state, device-code sign-in (copy the code, open the
   authorization page, cancel, sign out), the Agent-tool switch, and
-  refresh/fetch/pull/push for the current session folder. Reachable from the add
-  sheet, the session details "Plugins" tab, or "All features".
+  refresh/fetch/pull/push for the current session folder. The commit message and
+  the Client ID can be typed right in the panel. Reachable from the add sheet,
+  the session details "Plugins" tab, or "All features".
+- **Repositories panel**: the account's GitHub repositories (up to 12; tapping a
+  row clones it into the current session folder) and the checkouts already on
+  this machine (branch, ahead/behind, change count). The clone root and adding
+  or removing checkouts stay on the Web settings page.
+- **Composer status strip**: one line above the message box reading
+  `@account · branch · N changed` (24 characters at most), replaced by a plain
+  notice when signed out, waiting for authorization, or outside a repository.
+  Tapping it opens the GitHub panel.
+- **Session actions**: Pull and Push for the current session folder, in the
+  session details "Info" tab.
 - **Composer entries**: native form inputs are not available everywhere, so
-  text-driven work uses the message box: paste the Client ID and tap "Save ID",
-  type a commit message and tap "Commit", type `owner/name` and tap "Clone".
+  text-driven work also uses the message box: paste the Client ID and tap
+  "Save ID", type a commit message and tap "Commit", type `owner/name` and tap
+  "Clone".
 - An app that does not advertise the `form` / `textField` components gets the
   panel without input fields, only those entries and their instructions, instead
-  of a form nobody can type into.
-- Remove any older standalone adaptation package on the same host first, so two
-  GitHub panels do not compete.
+  of a form nobody can type into; without `list` the repositories panel falls
+  back to a text summary.
 
 Hosts without the `dshGo` service are unaffected: none of this code runs there.
+Panel wording follows the app's `locale`: Chinese in a Chinese app, English
+elsewhere.
 
 ## Settings
 

@@ -1,10 +1,11 @@
 {
   "name": "@ban-sky/dsh-github",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "GitHub integration for DSH: official device-flow sign-in, repository creation, cloning, pull, commit and push. Security first.",
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.19",
+    "dsh": ">=0.2.1-rc.2 <0.3.0-0"
   },
   "exports": {
     ".": "./index.js",
@@ -60,6 +61,35 @@
       "draft"
     ],
     "contributes": {
+      "composer.strip": [
+        {
+          "id": "status",
+          "icon": "fork",
+          "text": {
+            "zh": "GitHub 状态",
+            "en": "GitHub status"
+          },
+          "panel": "github"
+        }
+      ],
+      "session.actions": [
+        {
+          "id": "session-pull",
+          "label": {
+            "zh": "拉取",
+            "en": "Pull"
+          },
+          "icon": "download"
+        },
+        {
+          "id": "session-push",
+          "label": {
+            "zh": "推送",
+            "en": "Push"
+          },
+          "icon": "share"
+        }
+      ],
       "composer.actions": [
         {
           "id": "save-client-id",
@@ -105,6 +135,19 @@
             "en": "GitHub"
           },
           "icon": "fork",
+          "placement": [
+            "chat.panel",
+            "session.tab",
+            "features"
+          ]
+        },
+        {
+          "id": "repos",
+          "title": {
+            "zh": "仓库",
+            "en": "Repos"
+          },
+          "icon": "folder",
           "placement": [
             "chat.panel",
             "session.tab",

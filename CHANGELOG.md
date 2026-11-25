@@ -6,6 +6,34 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-11-25
+
+### Added
+
+- **A Repositories panel in the DSH GO app.** It lists the account's GitHub
+  repositories (12 at most; tapping a row clones it into the current session
+  folder) and the checkouts already on the machine (branch, ahead/behind, change
+  count). Reachable from the GitHub panel's "Repositories" button.
+- **A composer status strip.** One line above the message box reads
+  `@account · branch · N changed` (24 characters at most), or says why it cannot
+  (`signed out`, `waiting for authorization`, `no session`, `not a repo`,
+  `cannot read state`). Tapping it opens the GitHub panel.
+- **Two session actions**, Pull and Push for the current session folder, in the
+  session details "Info" tab.
+- Both panels and the strip honor the app locale: Chinese in a Chinese app,
+  English elsewhere. Without the `list` component the Repositories panel falls
+  back to a text summary; without `form`/`textField` the GitHub panel keeps its
+  buttons and drops the input fields, as before.
+
+### Changed
+
+- `engines` now declares `node >=22.19` and `dsh >=0.2.1-rc.2 <0.3.0-0`, the
+  range this plugin is verified against (DSH 0.2.2 changed nothing the plugin
+  calls: `authorization`, `credentials`, `connection.fetch` and the client slot
+  API are unchanged, and a failing client entry now degrades instead of aborting
+  boot).
+- User-Agent is `dsh-github/1.2.0`.
+
 ## [1.1.1] - 2026-11-10
 
 ### Fixed
